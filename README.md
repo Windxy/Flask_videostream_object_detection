@@ -23,7 +23,7 @@ python app.py
 
 #### demo
 
-<img src="imgs\demo.png" alt="demo" style="zoom:50%;" />
+<img src=".\imgs\demo.png" alt="demo" style="zoom:50%;" />
 
 
 
