@@ -3,6 +3,19 @@ import numpy as np
 import argparse
 import onnxruntime as ort
 import math
+import time
+from functools import wraps
+
+# 计时器记录函数执行性能的装饰器
+def timeit(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.clock()
+        ret = func(*args, **kwargs)
+        end = time.clock()
+        print('used:', end - start)
+        return ret
+    return wrapper
 
 class PicoDet():
     def __init__(self, model_pb_path, label_path, prob_threshold=0.4, iou_threshold=0.3):
@@ -125,6 +138,8 @@ class PicoDet():
             x2 = np.clip(x2, 0, max_shape[1])
             y2 = np.clip(y2, 0, max_shape[0])
         return np.stack([x1, y1, x2, y2], axis=-1)
+
+    @timeit
     def detect(self, srcimg):
         img, newh, neww, top, left = self.resize_image(srcimg)
         img = self._normalize(img)
@@ -140,7 +155,7 @@ class PicoDet():
                 int((det_bboxes[i,2] - left) * ratiow), srcimg.shape[1]), min(int((det_bboxes[i,3] - top) * ratioh), srcimg.shape[0])
             # results.append((xmin, ymin, xmax, ymax, self.classes[det_classid[i]], det_conf[i]))
             cv2.rectangle(srcimg, (xmin, ymin), (xmax, ymax), (0, 0, 255), thickness=1)
-            print(self.classes[det_classid[i]]+': '+str(round(det_conf[i], 3)))
+            # print(self.classes[det_classid[i]]+': '+str(round(det_conf[i], 3)))
             cv2.putText(srcimg, self.classes[det_classid[i]]+': '+str(round(det_conf[i], 3)), (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), thickness=1)
 #         cv2.imwrite('result.jpg', srcimg)
         return srcimg

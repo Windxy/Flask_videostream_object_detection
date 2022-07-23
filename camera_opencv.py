@@ -4,6 +4,7 @@ from base_camera import BaseCamera
 from PicoDet import PicoDet
 net = PicoDet(model_pb_path='coco/picodet_s_320_coco.onnx', label_path='coco/coco.names', prob_threshold=0.4, iou_threshold=0.3)
 
+
 class Camera(BaseCamera):
     video_source = 0
 
